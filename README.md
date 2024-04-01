@@ -4,7 +4,7 @@ The following projects are assignments associated with the Advanced Macroeconomi
 
 # Homework 3 [(download pdf)](https://github.com/aryamann04/Economics/files/14819338/AdvancedMacroHW3.pdf)
 
-I conducted an empirical analysis on economic growth, utilizing a cross-country dataset featuring specific economic indicators from 1990 and 2015.My work involved summarizing the data through statistical analysis, where I examined relationships between variables such as GDP per capita and the savings rate. I also explored concepts like convergence, comparing results across the two time periods and considering the impact of variables such as schooling and population growth on economic outcomes.
+I conducted an empirical analysis on economic growth, utilizing a cross-country dataset featuring specific economic indicators from 1990 and 2015. My work involved summarizing the data through statistical analysis, where I examined relationships between variables such as GDP per capita and the savings rate. I also explored concepts like convergence, comparing results across the two time periods and considering the impact of variables such as schooling and population growth on economic outcomes.
 
 
 # Homework 4 [(download pdf)](https://github.com/aryamann04/Economics/files/14819342/AdvancedMacroHW4.pdf)
