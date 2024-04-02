@@ -243,13 +243,13 @@ regressing the growth of consumption at time $t$ on values of
 consumption, income, and stock market growth known at time $t-1$. We
 denote the set of these variables as $X_{t-1}$. We will first regress
 consumption growth against one period lagged values of consumption,
-income, and stock market growth, i.e.  \[
-\begin{aligned}
+income, and stock market growth, i.e.  
+$$\begin{aligned}
 \Delta \ln{(NDS_t)} &= \alpha + \beta\left[\Delta \ln{(NDS_{t-1})}\right] + \epsilon_t && \text{(1)} \\
 \Delta \ln{(NDS_t)} &= \alpha + \beta\left[\Delta \ln{(GDP_{t-1})}\right] + \epsilon_t && \text{(2)} \\
 \Delta \ln{(NDS_t)} &= \alpha + \beta\left[\Delta \ln{(SP_{t-1})}\right] + \epsilon_t && \text{(3)} \\
-\end{aligned}
-\] $$
+\end{aligned}$$
+$$
 \begin{aligned}
 \Delta \ln{(NDS_t)} &= \alpha + \beta_1\left[\Delta \ln{(NDS_{t-1})}\right] +
 \beta_2\left[\Delta \ln{(GDP_{t-1})}\right] + 
