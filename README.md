@@ -1,4 +1,4 @@
-# Advanced Macroeconomics Assignments
+# Empricial Macroeconomics 
 
 The following projects are assignments associated with the Advanced Macroeconomics class at NYU. 
 **Important**: The markdown files do not show the tables and plots, which can be accessed by downloading the respective knitted pdfs here. 
