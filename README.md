@@ -3,7 +3,7 @@
 The following projects are assignments associated with the Advanced Macroeconomics class at NYU. 
 **Important**: The markdown files do not show the tables and plots, which can be accessed by downloading the respective knitted pdfs here. 
 
-## Homework 6 [AdvancedMacroHW6.pdf](https://github.com/aryamann04/Economics/files/14831042/AdvancedMacroHW6.pdf)
+## Homework 6 [(download pdf)](https://github.com/aryamann04/Economics/files/14831042/AdvancedMacroHW6.pdf)
 
 In this homework, I first transformed and analyzed time series data of US GDP per capita, personal consumption expenditure on nondurables per capita, and the SP500 index, adjusting for inflation, from 1960 to 2022, focusing mainly on data until 2019Q4 due to the pandemic's impact. I plotted logarithmic values, calculated growth rates, and provided summary statistics and correlations to examine volatility and relationships among these variables. I then conducted an OLS regression following Hall's approach to test if consumption growth is predictable, and used the Campbell-Mankiw model to explore the behavior of different consumer groups regarding income changes. Lastly, I considered the effects of the pandemic on our analysis, proposing strategies to ensure robust results, including the adjustment for outliers, in the context of maintaining the rigor of my findings for potential implications in financial analysis and investment strategy development.
 
