@@ -1,6 +1,6 @@
 # Empricial Macroeconomics 
 
-The following projects are assignments associated with the Advanced Macroeconomics class at NYU. 
+The following projects are assignments associated with Professor Simon Gilchrist's Advanced Macroeconomics (ECON-UA 367) class at NYU. 
 **Important**: The markdown files do not show the tables and plots, which can be accessed by downloading the respective knitted pdfs here. 
 
 ## Homework 6 [(download pdf)](https://github.com/aryamann04/Economics/files/14831042/AdvancedMacroHW6.pdf)
