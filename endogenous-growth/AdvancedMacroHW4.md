@@ -1,0 +1,495 @@
+Advanced Macroeconomics Homework 4
+================
+2024-02-29
+
+## Problem 1: Developmental Accounting
+
+### 1(a)
+
+We will calculate technology and per-capita income relative to the
+United States. Define the relative savings rate by
+$s_{i,t} = \frac{S_{i,t}}{S_{us,t}}$ and relative human capital measure
+by $h_{i,t} = \frac{H_{i,t}}{H_{us,t}}$. Then, Hall and Jones’ formula
+can be rewritten as
+$$y_{i,t} = \left( s_{i,t} \right)^{\frac{\alpha}{1-\alpha}}a_{i,t}h_{i,t}$$
+Rearranging, we have
+$$a_{i,t} = \frac{y_{i,t}}{h_{i,t}}\left( s_{i,t} \right)^{-\frac{\alpha}{1-\alpha}}$$
+We can now use the given data to calculate and plot $a_{i,t}$ and
+$y_{i,t}$.
+
+``` r
+data <- read.table("/Users/aryaman/Downloads/MRW_2015.csv", header = TRUE, sep = "\t")
+
+# Drop major oil producing countries from the data set
+data <- data[data$oil == 0, ]
+
+# Calculate relative savings and human capital measure
+data$rs1990 <- data$savingsrate1990 / 
+               data[data$country == "United States", "savingsrate1990"]
+data$rs2015 <- data$savingsrate2015 / 
+               data[data$country == "United States", "savingsrate2015"]
+data$rhc1990 <- data$hc1990 / 
+                data[data$country == "United States", "hc1990"]
+data$rhc2015 <- data$hc2015 / 
+                data[data$country == "United States", "hc2015"]
+
+# Calculate relative income per capita
+data$ry1990 <- data$rgdpe1990 / 
+               data[data$country == "United States", "rgdpe1990"]
+data$ry2015 <- data$rgdpe2015 / 
+               data[data$country == "United States", "rgdpe2015"]
+
+# Calculate relative technology measure
+alpha <- 1/3
+data$ra1990 <- (data$ry1990 / data$rhc1990) * (data$rs1990)^(-alpha/(1-alpha))
+data$ra2015 <- (data$ry2015 / data$rhc2015) * (data$rs2015)^(-alpha/(1-alpha))
+
+plot(data$ry1990, data$ra1990, pch = 16, col = "blue", 
+     main = "Relative Income vs. Relative Technology (1990)", 
+     xlab = "Relative Income (y_i,t)", ylab = "Relative Technology (a_i,t)")
+```
+
+![](AdvancedMacroHW4_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+``` r
+plot(data$ry2015, data$ra2015, pch = 16, col = "red",
+     main = "Relative Income vs. Relative Technology (2015)", 
+     xlab = "Relative Income (y_i,t)", ylab = "Relative Technology (a_i,t)")
+```
+
+![](AdvancedMacroHW4_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
+
+We observe that in both plots, there is a strong positive relationship
+between $y_{i,t}$ and $a_{i,t}$. This suggests that countries with
+living standards relative to the United States also tend to have higher
+technology measures relative to the United States, and vice-versa.
+
+### 1(b)
+
+In order to reproduce the averages, we will take the geometric means of
+the four variables in both 1990 and 2015. ‘ry’ represents relative
+income, ‘rcapintensity’ the relative capital intensity defined as
+$s_{i,t}^{\alpha/(1-\alpha)}$, ‘rhc’ the relative human capital measure,
+and ‘ra’ the relative technology measure (all relative to the United
+States). Let $\alpha = 1/3$, then $\alpha/(1-\alpha) = 1/2$.
+
+``` r
+data$rcapintensity1990 <- data$rs1990^0.5
+data$rcapintensity2015 <- data$rs2015^0.5
+
+sapply(data[, c('ry1990', 'rcapintensity1990', 'rhc1990', 'ra1990')]
+              , function(x) exp(mean(log(x))))
+```
+
+    ##            ry1990 rcapintensity1990           rhc1990            ra1990 
+    ##         0.1364857         0.8009503         0.5611514         0.3036697
+
+``` r
+sapply(data[, c('ry2015', 'rcapintensity2015', 'rhc2015', 'ra2015')]
+              , function(x) exp(mean(log(x))))
+```
+
+    ##            ry2015 rcapintensity2015           rhc2015            ra2015 
+    ##         0.1798114         0.9084818         0.6499240         0.3045358
+
+We can calculate the relative importance of each variable by diving the
+reciprocal of each variable by the sum of the reciprocals of the three
+variables. For instance, to calculate the relative importance of the
+relative human capital in explaining differences in relative living
+standards, we would calculate
+$$\frac{\frac{1}{h_{i,t}}}{\frac{1}{(s_{i,t})^{\alpha/(1-\alpha)}} + \frac{1}{h_{i,t}} + \frac{1}{a_{i,t}}}$$
+
+In 1990, the average percent difference in per capita income relative to
+the United States was $1-0.136 = 0.864 = 86.4$%. Out of this, $19.7$% is
+attributed to differences in capital intensity relative to the US,
+$28.2$% to relative differences in human capital, and $52.1$% to
+differences in TFP.
+
+In 2015, the average percent difference in per capita income relative to
+the United States was $1-0.180=82.0$%. Out of this, $18.6$% can be
+attributed to differences in capital intensity relative to the US, 26.0%
+to differences in human capital, and 55.4% to differences in TFP.
+
+We do not observe a substantial difference in the relative importance of
+these factors in explaining differences in per capita income from 1990
+to 2015. In both time periods, technology is by far the most important
+variable in explaining the average percent difference in living
+standards.
+
+### 1(c)
+
+``` r
+sprintf("%.2f%%", 100 * (data[data$country == "China", "ra2015"] 
+                        / data[data$country == "China", "ra1990"] - 1))
+```
+
+    ## [1] "103.73%"
+
+The decomposition thus suggests that China’s technology measure more
+than doubled (an increase of 103.73%) relative to that of the United
+States across the period 1900 to 2015.
+
+### 1(d)
+
+The TFP Share is defined as
+$$share_{i,t} = \frac{\frac{1}{a_{i,t}}}{\frac{1}{a_{i,t}} + \frac{1}{h_{i,t}s_{i,t}^{\alpha/(1-\alpha)}}}$$
+
+We will calculate and plot the TFP Share, $share_{i,t}$, for the given
+data set.
+
+``` r
+data$tfpshare1990 <- 1 / data$ra1990 / (1 / data$ra1990 + 1 / 
+                 (data$rhc1990 * data$rs1990^(alpha / (1 - alpha))))
+
+data$tfpshare2015 <- 1 / data$ra2015 / (1 / data$ra2015 + 1 / 
+                 (data$rhc2015 * data$rs2015^(alpha / (1 - alpha))))
+
+plot(log(data$ry1990), data$tfpshare1990, pch = 16, col = "blue",
+     main = "Relative Income vs. Relative TFP Share, 1990",
+     xlab = "y_i,1990", ylab = "share_i,1990")
+```
+
+![](AdvancedMacroHW4_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+plot(log(data$ry2015), data$tfpshare2015, pch = 16, col = "red",
+     main = "Relative Income vs. Relative TFP Share, 2015",
+     xlab = "y_i,2015", ylab = "share_i,2015")
+```
+
+![](AdvancedMacroHW4_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+
+The plots suggest that a country’s TFP share relative to the United
+States tends to be lower if the country has higher living standards
+relative to the United States, and vice-versa. We see this relationship
+more clearly in the 2015 data as seen by the more obvious clustering of
+the data points along the negative linear relationship.
+
+### 1(e)
+
+#### 1(e)(i)
+
+To check for convergence in technology, we will first plot
+$\Delta \ln{(a_i)} = \ln{(a_{i,2015})} - \ln{(a_{i,1990})}$ against
+$\ln{(a_{i,1990})}$.
+
+``` r
+data$delta_log_a <- log(data$ra2015/data$ra1990)
+
+plot(log(data$ra1990), data$delta_log_a, pch = 16,
+     main = "Convergence in Technology, 1990 - 2015",
+     xlab = "log(a_i,1990)", ylab = "delta log(a_i,t)")
+```
+
+![](AdvancedMacroHW4_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+There seems to be little evidence for unconditional convergence in the
+relative technology measure over time in this data since there is no
+evident relationship between the values in the plot.
+
+#### 1(e)(ii)
+
+Next, we will estimate the relationship
+$$\Delta \ln{(a_i)} = \gamma_0 + \gamma_1\ln{(a_{i,1990})} + \epsilon_i$$
+to test for unconditional convergence in the relative technology measure
+$a_i$.
+
+``` r
+unconditional_conv_lm <- lm(delta_log_a ~ log(ra1990), data = data)
+stargazer(unconditional_conv_lm, 
+      title = "Unconditional Convergence in Relative Technology", type = 'latex')
+```
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy
+Institute. E-mail: marek.hlavac at gmail.com % Date and time: Thu, Feb
+29, 2024 - 17:11:07
+As expected, our regression does not find evidence of unconditional
+convergence in technology relative to the United States. The coefficient
+on $\ln{(a_{i,1990})}$ is near zero ($\gamma_1 = -0.070$) and has an
+insignificant p-value. Further, the adjusted $R^2$ is very low at
+$0.001$, indicating that unconditional convergence in technology is not
+observed in the data.
+
+#### 1(e)(iii)
+
+Finally, we will estimate the relationship
+$$\Delta \ln{(a_i)} = \gamma_0 + \gamma_1\ln{(a_{i,1990})} + \gamma_2\ln{(h_{i,1990})} + \epsilon_i$$
+to test for convergence in the relative technology measure conditioned
+on the level of human capital relative to the US.
+
+``` r
+conditional_conv_lm <- lm(delta_log_a ~ log(ra1990) + log(rhc1990), data = data)
+stargazer(conditional_conv_lm, title = "Convergence in Relative Technology, 
+          Conditioned on Relative Human Capital", type = 'latex')
+```
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy
+Institute. E-mail: marek.hlavac at gmail.com % Date and time: Thu, Feb
+29, 2024 - 17:11:07
+We now have statistically significant coefficients for both
+$\ln{(a_{i,1990})}$ and $\ln{(h_{i,1990})}$, suggesting that after
+controlling for human capital, the countries in the data set do show
+evidence for convergence in technology relative to the United States.
+The model suggests that a one percent increase in log human capital
+relative to the United States tends to increase the change in relative
+technology from 1990 to 2015 by 1.174%.
+
+Our adjusted $R^2$ value suggests that starting technology and human
+capital together account for approximately $36.6$% of the variation in
+how relative technology evolved from 1990 to 2015 across the different
+countries. Since growth in technology is dependent on another variable
+in the model, human capital, we should not consider relative technology
+as an exogenous variable.
+
+## Problem 2: Endogenous Growth
+
+### 2(a)
+
+We know
+$$f(g) = \frac{\Delta g_{t+1}}{g_t} = \frac{g_{t+1} - g_t}{g_t}$$
+$$g_t = \frac{A_t - A_{t-1}}{A_{t-1}}$$ Substituting the evolution of
+technology relationship, we have
+$$g_t = \frac{B(a_LL_{t-1})^{\gamma}A_{t-1}^{\theta}}{A_{t-1}}$$
+$$= B(a_LL_{t-1})^{\gamma}A_{t-1}^{\theta-1} -1$$ Thus,
+$$f(g) = \frac{g_{t+1} - g_t}{g_t} = \frac{g_{t+1}}{g_t} - 1$$
+$$= \frac{B(a_LL_{t})^{\gamma}A_{t}^{\theta-1}}{B(a_LL_{t-1})^{\gamma}A_{t-1}^{\theta-1}} - 1$$
+$$= \left( \frac{L_{t}}{L_{t-1}} \right)^{\gamma} \left( \frac{A_t}{A_{t-1}} \right)^{\theta-1} - 1$$
+Using the fact that  
+$$\frac{L_t}{L_{t-1}} = 1+n$$ $$\frac{A_t}{A_{t-1}} = 1+g$$ we have
+$$f(g) = \left[\left( \frac{L_{t}}{L_{t-1}} \right)^{\gamma} \left( \frac{A_t}{A_{t-1}} \right)^{\theta-1} - 1\right]$$
+$$= \left[(1+n)^{\gamma}(1+g)^{\theta -1}-1\right]$$
+$$= \left[\frac{(1+n)^{\gamma}}{(1+g)^{1-\theta}} - 1\right] $$
+
+### 2(b)
+
+``` r
+f_gt <- function(g, n, gamma, theta) {
+  ((1 + n)^gamma / (1 + g)^(1 - theta)) - 1
+}
+
+gt_values <- seq(0.01, 1, by = 0.001) 
+
+f_values <- f_gt(gt_values, n = 0.02, gamma = 0.5, theta = 0.5)
+
+plot(gt_values, f_values, type = "l", col = "blue",
+     xlab = expression(g[t]), ylab = expression(f(g[t])),
+     main = "Percent changes in growth rate vs. current growth rate",
+     xlim = c(0, max(gt_values)), ylim = c(min(f_values), max(f_values)))
+
+abline(h = 0, lty = 2, col = "red")  
+grid()
+```
+
+![](AdvancedMacroHW4_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+The plot assumes values of $n = 0.02$, $\gamma = 0.5$, and
+$\theta = 0.5$. We see that $f(g)$, the percent changes in the
+technology growth rate across years, is strictly decreasing in current
+technology growth rate, $g$.
+
+### 2(c)
+
+Suppose $\theta = 0$ and $\gamma = 1$. To find the long-run steady-state
+technology growth rate, $g^*$, we know that the percent change in that
+growth rate is zero, i.e.  $$f(g^*) = 0$$ Thus,
+$$f(g^*) = \left[ \frac{(1+n)^{\gamma}}{(1+g^*)^{1-\theta}}-1\right] = 0$$
+$$\frac{(1+n)}{(1+g^*)} = 1$$ $$g^* = n$$ Therefore, we see that in the
+long-run, the steady-state growth rate of $A_t$, $g^*$, will be equal to
+the population growth rate $n$ if $\gamma = 1$ and $\theta = 0$.
+
+### 2(d)
+
+We will now solve for the long-run steady-state growth rate of $A_t$
+assuming $0 < \theta < 1$ and $\gamma > 0$. Again, we know that
+$f(g^*) = 0$ in steady-state, so
+$$\left[ \frac{(1+n)^{\gamma}}{(1+g^*)^{1-\theta}}-1\right] = 0$$
+$$\frac{(1+n)^{\gamma}}{(1+g^*)^{1-\theta}} = 1$$
+$$(1+n)^{\gamma} = (1+g^*)^{1-\theta}$$
+$$g^* = \left[ 1+n\right]^{\frac{\gamma}{1-\theta}}-1$$
+
+From this equation, it is evident that $g^*$ increases with the
+population growth rate $n$ will increase $g^*$ since the exponent
+$\frac{\gamma}{1-\theta} > 0$. Further, since the exponent increases
+with both $\gamma$ and $\theta$, we notice that $g^*$ is increasing in
+$\gamma$ and $\theta$ as well if $n > 0$.
+
+### 2(e)
+
+The model will converge to this long-run steady-state growth rate if
+there exists some $g^*$ such that $f(g^*) = 0$ and $g^* > 0$. If
+$0 < \theta < 1$, then the solution $g^*$ exists and is positive only if
+the population growth rate $n$ is positive since the exponent
+$\gamma/(1-\theta) > 0$.
+
+If $\theta = 0$, we see that $g^* = (1+n)^\gamma - 1$ in the
+steady-state, and $g^* = n$ if we further restrict $\gamma = 1$. Thus,
+for all $0 \leq \theta < 1$, there is a solution $g^* > 0$ to
+$f(g^*) = 0$ if $n>0$. In other words, there exists a steady-state
+technology growth rate the economy converges to if the population growth
+rate is positive and $0 \leq \theta < 1$.
+
+### 2(f)
+
+We observe that $$g_{t+1} = B(a_LL_{t})^{\gamma}A_{t}^{\theta-1} -1$$
+This implies that the growth rate of technology will jump immediately up
+in the short run in response to an increase in $a_L$.
+
+To assess the long-run effect of this increase, we see that $f(g)$ does
+not depend on $a_L$, but only on the population growth rate, the current
+technology growth rate, and the parameters of the model. Thus, since
+$f(g)$ remains unchanged by the increase in $a_L$, there will be no
+long-run movement in the technology growth rate $g^*$. After the
+immediate increase, $g$ will gradually drop to the pre-increase
+steady-state level.
+
+With the dynamics of the technology growth rate, we see that $A_t$ will
+begin growing quicker in the short run and then gradually level off
+until it is growing at the same rate it was before the increase in
+$a_L$. $A_t$ will then continue to grow at this constant rate $g^*$.
+
+### 2(g)
+
+If $\theta > 1$, then we notice that the percent change in the growth
+rate of technology $f(g)$ is increasing in $g$. This implies that if
+$g_t$ is higher, the jump up to $g_{t+1}$ will be even higher than if
+$g_t$ were lower assuming $g_t > 0$. Therefore, if $\theta > 1$, then
+the growth rate of technology will not converge to a positive value in
+the long-run assuming population growth is positive.
+
+Empirical evidence suggests that $\theta > 1$ because technology has
+been growing at a sustained exponential rate in recent decades. The
+creation of new technology feeds into the production of future
+technology, so technology growth is accelerating.
+
+## Problem 3: Intertemporal Consumption
+
+### 3(a)
+
+The budget constraints for each period are $$C_1 = W - A$$
+$$C_2 = (1+r)A$$ Substituting $A = \frac{C_2}{1+r}$ into the budget
+constraint for the first period, we have the lifetime budget constraint
+$$C_1 + \frac{C_2}{1+r} = W$$
+
+### 3(b)
+
+Let $R = 1+r$. The budget constraint then becomes
+$$C_1 + \frac{C_2}{R} = W$$ We want to choose savings $A$ to maximize
+the utility across both periods, $$U(C_1, C_2) = U(C_1) + \beta U(C_2)$$
+plugging in our budget constraints in terms of savings $C_1 = W - A$ and
+$C_2 = RA$, our problem becomes to choose $A$ in order to maximize
+$$U(W-A) + \beta U(RA)$$ Taking the first derivative of this expression
+with respect to $A$ and setting it to zero yields the Euler equation:
+$$\frac{dU}{dA} = -U'(W-A) + \beta U'(RA)\cdot R = 0$$
+$$U'(W-A) = R\beta U'(RA)$$ $$U'(C_1) = R\beta U'(C_2)$$ Substituting
+the derivatives, we find that the optimal consumption satisfies
+$$C_1^{-\gamma} = R\beta  C_2^{-\gamma}$$
+$$C_2^{\gamma} = R\beta  C_1^{\gamma}$$
+$$C_2 = (R\beta)^{\frac{1}{\gamma}}C_1$$ $$C_2 = (R\beta)^{\sigma}C_1$$
+The elasticity of $C_2/C_1$ with respect to $R$ is defined as the
+derivative of log $C_2/C_1$ with respect to log $R$, which is equal to
+$\sigma$ since $$\ln{C_2} = \sigma\ln{(R\beta)}$$
+
+### 3(c)
+
+Substituting the derived optimality condition
+$C_2 = (R\beta)^{\sigma}C_1$ into the budget constraint, we have
+$$W = C_1 + \frac{(R\beta)^{\sigma}C_1}{R}$$
+$$= C_1 + R^{\sigma - 1}\beta^{\sigma}C_1$$
+$$= C_1\left[ 1 + R^{\sigma -1}\beta^{\sigma} \right]$$ Thus,
+$$C_1 = \frac{W}{1+ (1+r)^{\sigma-1}\beta^{\sigma}}$$
+$$C_2 = \frac{(1+r)\beta W}{1+ (1+r)^{\sigma-1}\beta^{\sigma}}$$
+
+Since both $C_1$ and $C_2$ increase linearly with $W$, the elasticity of
+consumption with respect to the first period wage $W$ is equal to $1$
+for both $C_1$ and $C_2$.
+
+### 3(d)
+
+An increase in the discount factor $\beta$ means that the utility of
+second period consumption is now discounted less or, in other words, is
+worth more. This symbolizes that households now prefer to save more in
+the first period and consume it in the second period instead. The
+quantity that the household saves, $A$, is given by
+$$A = W - C_1 = W\left[1 - \frac{1}{1+ (1+r)^{\sigma-1}\beta^{\sigma}}\right]$$
+If $\beta$ increases, since $\sigma > 0$, $A$ will increase as well.
+Correspondingly, first period consumption $C_1$ will decrease as well.
+The extra wealth saved will then be consumed in the second period,
+increasing $C_2$.
+
+### 3(e)
+
+Rearranging the budget constraint to express $C_2$ in terms of $C_1$, we
+have $$W = C_1 + \frac{C_2}{1+r}$$ $$C_2 = (1+r)(W - C_1)$$
+$$C_2 = -(1+r)C_1 + (1+r)W$$ Thus, the slope of our budget constraint is
+given by $-(1+r)$ which will increase in magnitude (become more
+negative) as $r$ increases. The $y$-intercept represents the amount of
+consumption possible if all wages are saved and then spent, along with
+the accumulated interest, in period two. This is equal to the value of
+the wages plus interest, $(1+r)W$. The $x$-intercept, in turn,
+represents consumption if all wages are spent in the first period
+itself, which is equal to $W$ regardless of the interest rate.
+
+``` r
+budget_constraint <- function(C1, W, r) {
+  return(-(1 + r) * C1 + W * (1 + r))
+}
+
+W <- 1
+r1 <- 0.05
+r2 <- 0.1
+
+C1_values <- seq(0, W, length.out = 100)
+
+C2_values_r1 <- budget_constraint(C1_values, W, r1)
+C2_values_r2 <- budget_constraint(C1_values, W, r2)
+
+plot(C1_values, C2_values_r1, type = "l", col = "blue",
+     main = "Budget Constraints Before and After Increase in Interest Rate",
+     xlab = "C1", ylab = "C2")
+
+lines(C1_values, C2_values_r2, col = "red")
+legend("topright", legend = c("Before", "After"), col = c("blue", "red"), lty = 1)
+```
+
+![](AdvancedMacroHW4_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+In the chart above, the wage $W$ is normalized to 1. Thus, the
+$y$-intercept is equal to $(1+r)$ before the interest rate increase, and
+increases to $(1+r^*)$ after where $r^* > r$. The $x$-intercept is
+simply $W = 1$. The slope of the budget constraint goes from $-(1+r)$ to
+$-(1+r^*)$ becoming steeper and more negative, suggesting that every
+unit of period one consumption is associated with a greater cost in
+forgone period two consumption after the rate increase.
+
+We observe that after the interest rate increase, our new budget
+constraint is steeper and is greater than or equal to the previous
+budget constraint at every point. This tells us that the agent can now
+get more period two consumption than they could before holding period
+one consumption fixed, unless they spent it all in the first period.
+
+Algebraically, we see from our expressions that the quantity of
+consumption in period 1 is indeterminate following an increase in $r$
+since it depends on whether $\sigma > 1$ or $\sigma < 1$. However,
+period two consumption will increase regardless because of the $(1+r)$
+term in the numerator.
+
+### 3(f)
+
+Consider the expression for the optimal quantity of period one
+consumption $$C_1 = \frac{W}{1+ (1+r)^{\sigma-1}\beta^{\sigma}}$$
+
+If $0 < \sigma < 1$, then $\sigma - 1 < 0$, which implies that an
+increase in $r$ would decrease the denominator of the expression. This
+implies that $C_1$ would increase.
+
+If $\sigma = 1$, then $C_1$ no longer depends on $r$. Thus, when we have
+log-utility, after the rate increase, period one consumption will not
+change.
+
+If $\sigma > 1$, then $\sigma - 1 > 0$, which implies that an increase
+in $r$ would increase the denominator of the expression. This implies
+that $C_1$ would decrease.
+
+Thus, the change in period one consumption following an increase in the
+interest rate depends on the value of the intertemporal-elasticity of
+substitution $\sigma$.
